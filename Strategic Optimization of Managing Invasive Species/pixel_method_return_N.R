@@ -92,13 +92,13 @@ random_pixel=function(inf,buffer,budget,cost_per_meter_sq){
   ply_bf$Cumu_Area=0
   for (i in 1:n){
     trt=gUnionCascaded(ply_bf[1:i,])
-    ply_bf$Cumu_Area[i]=area(trt)
+    ply_bf$Cumu_Area[i]=gArea(trt)
   }
   
   treatment=ply_bf[ply_bf$Cumu_Area<= area & ply_bf$Cumu_Area!=0,]
   treatment=gUnionCascaded(treatment)
   
-  df=area-area(treatment)
+  df=area-gArea(treatment)
   nontr=ply_bf[ply_bf$Cumu_Area> area,]
   
   if (df>0){
@@ -108,7 +108,12 @@ random_pixel=function(inf,buffer,budget,cost_per_meter_sq){
   }
   
   ginter = gIntersection(treatment, rd_ply)
-  trtN= area(ginter)/pixelArea
+  if (class(ginter)[1]=="SpatialCollections"){
+    ginter = ginter@polyobj
+    ginter=gUnionCascaded(ginter)
+  }
+  
+  trtN= gArea(ginter)/pixelArea
   inft = extract(inf, ginter, fun=sum, na.rm=T)
   
   ls = list(trtN, inft)
@@ -167,13 +172,13 @@ threat_pixel=function(inf,width,host, budget, buffer, cost_per_meter_sq){
   
   for (i in 1:n){
     trt=gUnionCascaded(ply_bf[1:i,])
-    ply_bf$Cumu_Area[i]=area(trt)
+    ply_bf$Cumu_Area[i]=gArea(trt)
   }
   
   treatment=ply_bf[ply_bf$Cumu_Area<= area & ply_bf$Cumu_Area!=0,]
   treatment=gUnionCascaded(treatment)
   
-  df=area-area(treatment)
+  df=area-gArea(treatment)
   nontr=ply_bf[ply_bf$Cumu_Area> area,]
   
   if (df>0){
@@ -184,7 +189,12 @@ threat_pixel=function(inf,width,host, budget, buffer, cost_per_meter_sq){
   
   
   ginter = gIntersection(treatment, ra_ply)
-  trtN= area(ginter)/pixelArea
+  if (class(ginter)[1]=="SpatialCollections"){
+    ginter = ginter@polyobj
+    ginter=gUnionCascaded(ginter)
+  }
+  
+  trtN= gArea(ginter)/pixelArea
   inft = extract(inf, ginter, fun=sum, na.rm=T)
   
   ls = list(trtN, inft)
@@ -216,13 +226,13 @@ Hinfest_pixel = function(inf,buffer,budget,cost_per_meter_sq){
   ply_bf$Cumu_Area=0
   for (i in 1:n){
     trt=gUnionCascaded(ply_bf[1:i,])
-    ply_bf$Cumu_Area[i]=area(trt)
+    ply_bf$Cumu_Area[i]=gArea(trt)
   }
   
   treatment=ply_bf[ply_bf$Cumu_Area<= area & ply_bf$Cumu_Area!=0,]
   treatment=gUnionCascaded(treatment)
   
-  df=area-area(treatment)
+  df=area-gArea(treatment)
   nontr=ply_bf[ply_bf$Cumu_Area> area,]
   
   if (df>0){
@@ -232,7 +242,13 @@ Hinfest_pixel = function(inf,buffer,budget,cost_per_meter_sq){
   }
   
   ginter = gIntersection(treatment, ra_ply)
-  trtN= area(ginter)/pixelArea
+  if (class(ginter)[1]=="SpatialCollections"){
+    ginter = ginter@polyobj
+    ginter=gUnionCascaded(ginter)
+  }
+  
+  trtN= gArea(ginter)/pixelArea
+ 
   inft = extract(inf, ginter, fun=sum, na.rm=T)
   
   ls = list(trtN, inft)
@@ -292,13 +308,13 @@ wvfrt_pixel = function(inf,buffer,budget, cost_per_meter_sq){
   
   for (i in 1:n){
     trt=gUnionCascaded(ply_bf[1:i,])
-    ply_bf$Cumu_Area[i]=area(trt)
+    ply_bf$Cumu_Area[i]=gArea(trt)
   }
   
   treatment=ply_bf[ply_bf$Cumu_Area<= area & ply_bf$Cumu_Area!=0,]
   treatment=gUnionCascaded(treatment)
   
-  df=area-area(treatment)
+  df=area-gArea(treatment)
   nontr=ply_bf[ply_bf$Cumu_Area> area,]
   
   if (df>0){
@@ -308,7 +324,12 @@ wvfrt_pixel = function(inf,buffer,budget, cost_per_meter_sq){
   }
   
   ginter = gIntersection(treatment, ra_ply)
-  trtN= area(ginter)/pixelArea
+  if (class(ginter)[1]=="SpatialCollections"){
+    ginter = ginter@polyobj
+    ginter=gUnionCascaded(ginter)
+  }
+  
+  trtN= gArea(ginter)/pixelArea
   inft = extract(inf, ginter, fun=sum, na.rm=T)
   
   ls = list(trtN, inft)
@@ -418,7 +439,7 @@ wvfrtHzd = function(inf, distance_classes, host,buffer,budget,  cost_per_meter_s
   
   for (i in 1:n){
     trt=gUnionCascaded(ply_bf[1:i,])
-    ply_bf$Cumu_Area[i]=area(trt)
+    ply_bf$Cumu_Area[i]=gArea(trt)
   }
   
   
@@ -430,13 +451,13 @@ wvfrtHzd = function(inf, distance_classes, host,buffer,budget,  cost_per_meter_s
   
   for (i in 1:length(ply_Nonselect)){
     trt=gUnionCascaded(ply_Nonselect[1:i,])
-    ply_Nonselect$Cumu_Area[i]=area(trt)
+    ply_Nonselect$Cumu_Area[i]=gArea(trt)
   }
   
   treatment=rbind(ply_select, ply_Nonselect[ply_Nonselect$Cumu_Area<=df,])
   treatment=gUnionCascaded(treatment)
   
-  df=area-area(treatment)
+  df=area-gArea(treatment)
   nontr=ply_Nonselect[ply_Nonselect$Cumu_Area>df,]
   
   if (df>0){
@@ -446,7 +467,12 @@ wvfrtHzd = function(inf, distance_classes, host,buffer,budget,  cost_per_meter_s
   }
   
   ginter = gIntersection(treatment, ra_ply)
-  trtN= area(ginter)/pixelArea
+  if (class(ginter)[1]=="SpatialCollections"){
+    ginter = ginter@polyobj
+    ginter=gUnionCascaded(ginter)
+  }
+  
+  trtN= gArea(ginter)/pixelArea
   inft = extract(inf, ginter, fun=sum, na.rm=T)
   
   ls = list(trtN, inft)
@@ -790,7 +816,7 @@ ip_treat = function(ip_rank_ply, budget, buffer, cost_per_meter_sq, inf){
   # 
   for (i in 1:n){
     trt=gUnionCascaded(ply_bf[1:i,])
-    ply_bf$Cumu_Area[i]=area(trt)
+    ply_bf$Cumu_Area[i]=gArea(trt)
   }
   
   # select pixels together with the treatment buffer whoes total area is not larger than the budget allowed
@@ -798,7 +824,7 @@ ip_treat = function(ip_rank_ply, budget, buffer, cost_per_meter_sq, inf){
   treatment=gUnionCascaded(treatment)
   
   # if the selected treatment area is smaller than budget allowed, select part of the next infested pixel
-  df=area-area(treatment)
+  df=area-gArea(treatment)
   nontr=ply_bf[ply_bf$Cumu_Area> area,]
   
   if (df>0){
@@ -808,7 +834,12 @@ ip_treat = function(ip_rank_ply, budget, buffer, cost_per_meter_sq, inf){
   }
   
   ginter = gIntersection(treatment, ip_rank_ply)
-  trtN= area(ginter)/pixelArea
+  if (class(ginter)[1]=="SpatialCollections"){
+    ginter = ginter@polyobj
+    ginter=gUnionCascaded(ginter)
+  }
+  
+  trtN= gArea(ginter)/pixelArea
   inft = extract(inf, ginter, fun=sum, na.rm=T)
   
   ls = list(trtN, inft)
