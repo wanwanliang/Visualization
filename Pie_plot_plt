@@ -1,0 +1,36 @@
+def my_fmt(x):
+    print(x)
+    return '{:.0f}%\n({:.0f})'.format(x, dfs.shape[0]*x/100)
+
+def my_fmt(x):
+    print(x)
+    return '{:.0f}%'.format(x, dfs.shape[0]*x/100)
+    
+    
+
+fig, axes = plt.subplots(2, 3, figsize=(15, 10))
+for i in range(6):
+    year = 2016 + i
+    
+    dt = dfs2.loc[dfs2.year==year]
+    
+    per = dt.groupby(['Stress']).size()
+    per_df = pd.DataFrame(per)
+    per_df.rename(columns={0:'Count'}, inplace=True)
+    per_df = per_df.reset_index()
+    per_df['Color']='orange'
+    per_df['Color'].loc[per_df.Stress=='Low']='blue'
+    per_df['Color'].loc[per_df.Stress=='High']='red'
+    labels = per_df['Stress']
+    per = per_df['Count']
+    cor = per_df['Color']
+    
+    if i>2:
+        x = 1
+        y = i - 3
+    else:
+        x = 0
+        y = i
+    lb = 'Year: ' + str(year)
+    axes[x,y].pie(per, labels=labels, colors= cor, autopct=my_fmt)
+    axes[x,y].set_title(lb, color='blue')
