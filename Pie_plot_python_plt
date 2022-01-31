@@ -8,11 +8,13 @@ def my_fmt(x):
     
     
 
-fig, axes = plt.subplots(2, 3, figsize=(15, 10))
-for i in range(6):
-    year = 2016 + i
+fig, axes = plt.subplots(3, 4, figsize=(20, 15))
+sns.set(font_scale = 2)
+
+for i in range(11):
+    year = 2011 + i
     
-    dt = dfs2.loc[dfs2.year==year]
+    dt = dfs.loc[dfs.year==year]
     
     per = dt.groupby(['Stress']).size()
     per_df = pd.DataFrame(per)
@@ -25,12 +27,9 @@ for i in range(6):
     per = per_df['Count']
     cor = per_df['Color']
     
-    if i>2:
-        x = 1
-        y = i - 3
-    else:
-        x = 0
-        y = i
+    y = i%4
+    x = i//4
+   
     lb = 'Year: ' + str(year)
     axes[x,y].pie(per, labels=labels, colors= cor, autopct=my_fmt)
     axes[x,y].set_title(lb, color='blue')
