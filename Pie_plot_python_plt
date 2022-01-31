@@ -33,3 +33,5 @@ for i in range(11):
     lb = 'Year: ' + str(year)
     axes[x,y].pie(per, labels=labels, colors= cor, autopct=my_fmt)
     axes[x,y].set_title(lb, color='blue')
+    
+ fig.delaxes(axes[2][3])
