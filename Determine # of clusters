@@ -1,0 +1,22 @@
+Sum_of_squared_distances = []
+sil = []
+K = range(3,10)
+for k in K:
+    km = KMeans(n_clusters=k, n_init=10, max_iter=500, init='k-means++')
+    km = km.fit(fac_var)
+    Sum_of_squared_distances.append(km.inertia_)
+    
+    lb = km.predict(fac_var)
+    silhouette_avg = silhouette_score(fac_var, lb)
+    sil.append(silhouette_avg )
+plt.plot(K, Sum_of_squared_distances, 'bx-')
+plt.xlabel('k')
+plt.ylabel('Sum_of_squared_distances')
+plt.title('Elbow Method For Optimal k')
+plt.show()
+
+plt.plot(K, sil, 'bx-')
+plt.xlabel('k')
+plt.ylabel('Silhouette score')
+plt.title('Silhouette approach')
+plt.show()
