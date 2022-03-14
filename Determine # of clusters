@@ -22,20 +22,23 @@ plt.title('Silhouette approach')
 plt.show()
 
 
+def k_cluster(data, n_cluster, iteration):
+    
+    clusters_df1 = pd.DataFrame()
+    sse_ls1 = []
+    for rp in range(iteration):
+        kmns = KMeans(n_clusters=n_cluster, n_init=15, max_iter=500, init='k-means++')
+        kmns.fit(data)
 
-clusters_df1 = pd.DataFrame()
-sse_ls1 = []
-for rp in range(20):
-    kmns = KMeans(n_clusters=n_cluster, n_init=15, max_iter=500, init='k-means++')
-    kmns.fit(dt_x)
+        lb = kmns.labels_
+        lb_df = pd.DataFrame(lb)
+        clusters_df1 = pd.concat([clusters_df1, lb_df], axis=1)
 
-    lb = kmns.labels_
-    lb_df = pd.DataFrame(lb)
-    clusters_df1 = pd.concat([clusters_df1, lb_df], axis=1)
+        sses = kmns.inertia_
+        sse_ls1.append(sses)
 
-    sses = kmns.inertia_
-    sse_ls1.append(sses)
-
-sse_df1 = pd.DataFrame(sse_ls1)
-ind1 = sse_df1[0].argmin(axis=0)
-clusters= clusters_df1.iloc[:,ind1]
+    sse_df1 = pd.DataFrame(sse_ls1)
+    ind1 = sse_df1[0].argmin(axis=0)
+    clusters= clusters_df1.iloc[:,ind1]
+    
+    return clusters
