@@ -1,0 +1,15 @@
+sns.set(font_scale=1.2)
+dt = dh_class.copy()
+plt.figure(figsize=(8,5))
+var='YGSMN'
+
+plt.hist(dt[dt["dh_level"]==3][var].reset_index(drop=True),color='red', alpha=0.8, label="High stress", bins=20,density=True)
+plt.hist(dt[dt["dh_level"]==2][var].reset_index(drop=True), alpha=0.7,color='orange', label="Medium stress", bins=20, density=True)
+plt.hist(dt[dt["dh_level"]==1][var].reset_index(drop=True), alpha=0.5, color='blue',label="Low stress", bins=20,density=True)
+
+plt.xlabel('Stress level')
+plt.ylabel('Frequency')
+#plt.xlim(5,300)
+#plt.xlim(0.97, 1)
+plt.legend(title='Stress level')
+plt.show()
