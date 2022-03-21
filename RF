@@ -1,0 +1,22 @@
+r_all= []
+r_dh = []
+
+for i in range(20):
+    fea_tr, fea_ts, y_tr, y_ts = train_test_split(dt_x1, dt_y, test_size=0.15, random_state=i*60)
+    rf = RandomForestRegressor(n_estimators=100, n_jobs=6)
+    rf.fit(fea_tr, y_tr)
+    cl_pred = rf.predict(fea_ts)
+    r1= sklearn.metrics.r2_score(y_ts, cl_pred)
+    r_all.append(r1)
+    
+    fea_tr, fea_ts, y_tr, y_ts = train_test_split(dt_x2, dt_y, test_size=0.15, random_state=i*60)
+    rf = RandomForestRegressor(n_estimators=100, n_jobs=6)
+    rf.fit(fea_tr, y_tr)
+    cl_pred = rf.predict(fea_ts)
+    r2= sklearn.metrics.r2_score(y_ts, cl_pred)
+    r_dh.append(r2)    
+   
+r_all = pd.DataFrame(r_all)
+r_dh = pd.DataFrame(r_dh)
+print(r_all.describe())
+print(r_dh.describe())
