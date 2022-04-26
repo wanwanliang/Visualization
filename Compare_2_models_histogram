@@ -1,0 +1,49 @@
+my_pal3 = {5: "purple",4:'red', 3: "orange", 2:'blue', 1:"green"}
+fig, ax = plt.subplots(2, 6, sharex='col', sharey='row', figsize=(20,10))
+j = 6
+dfs1b = wt2.loc[wt2['DH_level']<6].copy()
+dfs1b = ap2.loc[ap2['DH_level']<6].copy()
+dfs1b['Stress'] = dfs1b['DH_level']
+dfs2b = nowt2.loc[nowt2['DH_level']<6].copy()
+dfs2b['Stress'] = dfs2b['DH_level']
+sns.set(font_scale =2)
+
+for k in range(2):
+    
+    if k==0:
+        my_order = dfs1b.groupby(by=["Stress"])[dfs1b.columns[j]].mean().sort_values(ascending=False).index
+        sns.boxplot(x=dfs1b['Stress'], y=dfs1b[dfs1b.columns[j]],  ax=ax[k,0], showfliers = False, palette=my_pal3, order=my_order)
+
+        my_order = dfs1b.groupby(by=["Stress"])[dfs1b.columns[j+1]].mean().sort_values(ascending=False).index
+        sns.boxplot(x=dfs1b['Stress'], y=dfs1b[dfs1b.columns[j+1]],  ax=ax[k,1], showfliers = False, palette=my_pal3, order=my_order)
+
+        my_order = dfs1b.groupby(by=["Stress"])[dfs1b.columns[j+2]].mean().sort_values(ascending=False).index
+        sns.boxplot(x=dfs1b['Stress'], y=dfs1b[dfs1b.columns[j+2]],  ax=ax[k,2], showfliers = False, palette=my_pal3, order=my_order)
+
+        my_order = dfs1b.groupby(by=["Stress"])[dfs1b.columns[j+3]].mean().sort_values(ascending=False).index
+        sns.boxplot(x=dfs1b['Stress'], y=dfs1b[dfs1b.columns[j+3]],  ax=ax[k,3], showfliers = False, palette=my_pal3, order=my_order)
+        
+        my_order = dfs1b.groupby(by=["Stress"])[dfs1b.columns[j+4]].mean().sort_values(ascending=False).index
+        sns.boxplot(x=dfs1b['Stress'], y=dfs1b[dfs1b.columns[j+4]],  ax=ax[k,4], showfliers = False, palette=my_pal3, order=my_order)
+        
+        my_order = dfs1b.groupby(by=["Stress"])[dfs1b.columns[j+5]].mean().sort_values(ascending=False).index
+        sns.boxplot(x=dfs1b['Stress'], y=dfs1b[dfs1b.columns[j+5]],  ax=ax[k,5], showfliers = False, palette=my_pal3, order=my_order)
+   
+    else:
+        my_order = dfs2b.groupby(by=["Stress"])[dfs2b.columns[j]].mean().sort_values(ascending=False).index
+        sns.boxplot(x=dfs2b['Stress'], y=dfs2b[dfs2b.columns[j]],  ax=ax[k,0], showfliers = False, palette=my_pal3, order=my_order)
+
+        my_order = dfs2b.groupby(by=["Stress"])[dfs2b.columns[j+1]].mean().sort_values(ascending=False).index
+        sns.boxplot(x=dfs2b['Stress'], y=dfs2b[dfs2b.columns[j+1]],  ax=ax[k,1], showfliers = False, palette=my_pal3, order=my_order)
+
+        my_order = dfs2b.groupby(by=["Stress"])[dfs2b.columns[j+2]].mean().sort_values(ascending=False).index
+        sns.boxplot(x=dfs2b['Stress'], y=dfs2b[dfs2b.columns[j+2]],  ax=ax[k,2], showfliers = False, palette=my_pal3, order=my_order)
+
+        my_order = dfs2b.groupby(by=["Stress"])[dfs2b.columns[j+3]].mean().sort_values(ascending=False).index
+        sns.boxplot(x=dfs2b['Stress'], y=dfs2b[dfs2b.columns[j+3]],  ax=ax[k,3], showfliers = False, palette=my_pal3, order=my_order)
+        
+        my_order = dfs2b.groupby(by=["Stress"])[dfs2b.columns[j+4]].mean().sort_values(ascending=False).index
+        sns.boxplot(x=dfs2b['Stress'], y=dfs2b[dfs2b.columns[j+4]],  ax=ax[k,4], showfliers = False, palette=my_pal3, order=my_order)
+
+        my_order = dfs2b.groupby(by=["Stress"])[dfs2b.columns[j+5]].mean().sort_values(ascending=False).index
+        sns.boxplot(x=dfs2b['Stress'], y=dfs2b[dfs2b.columns[j+5]],  ax=ax[k,5], showfliers = False, palette=my_pal3, order=my_order)
