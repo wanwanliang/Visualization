@@ -1,24 +1,40 @@
-fig, ax = plt.subplots(1,2,figsize=(14,5),  sharey=False)
-ts3a.rename(columns={'value':'Cross year validation accuray'}, inplace=True)
-ts3b.rename(columns={'value':'Testing accuray'}, inplace=True)
-
 clrs = ['blue','skyblue','orange']
-
-sns.set(font_scale=1.8)
+fig, ax = plt.subplots(2,2,figsize=(17,9),  sharey=False,sharex=False)
+sns.set(font_scale=4)
 sns.set_theme(style='white')
 sns.despine(bottom = False, right = True, top=True)
-sc_bar= sns.barplot(x= ts3a['year'], y=ts3a['Cross year validation accuray'], hue=ts3a['module'], palette=clrs, fill=True, ax=ax[0])
-sc_bar.legend_.remove()
+
+sc_bar= sns.barplot(x= na1['year'], y=na1['Cross-year validation'], hue=na1['Method'], palette=clrs, fill=True, ax=ax[0,0])
+#sc_bar.legend_.remove()
+sns.move_legend(sc_bar, "upper center",frameon=False, bbox_to_anchor=(.55, 1.15))
 bars= sc_bar.patches
 pattern=['//','..','xx']
 hatches=np.repeat(pattern,6)
 for pat,bar in zip(hatches,bars):
     bar.set_hatch(pat)
     
-sc_bar= sns.barplot(x= ts3b['year'], y=ts3b['Testing accuray'], hue=ts3b['module'], palette=clrs, fill=True, ax=ax[1])
+sc_bar= sns.barplot(x= na2['year'], y=na2['Testing data'], hue=na2['Method'], palette=clrs, fill=True, ax=ax[0,1])
+sc_bar.legend_.remove()
+bars= sc_bar.patches
+for pat,bar in zip(hatches,bars):
+    bar.set_hatch(pat)
+    
+
+sc_bar= sns.barplot(x= ea1['year'], y=ea1['Cross-year validation'], hue=ea1['Method'], palette=clrs, fill=True, ax=ax[1,0])
+sc_bar.legend_.remove()
+bars= sc_bar.patches
+for pat,bar in zip(hatches,bars):
+    bar.set_hatch(pat)
+    
+sc_bar= sns.barplot(x= ea2['year'], y=ea2['Testing data'], hue=ea2['Method'], palette=clrs, fill=True, ax=ax[1,1])
 sc_bar.legend_.remove()
 bars= sc_bar.patches
 pattern=['//','..','xx']
 hatches=np.repeat(pattern,6)
 for pat,bar in zip(hatches,bars):
-    bar.set_hatch(pat)
+    bar.set_hatch(pat)    
+
+plt.text(x=-0.55, y = 1.95, s='B', fontsize=15, weight='bold')
+plt.text(x=-7.75, y = 1.95, s='A', fontsize=15, weight='bold')
+plt.text(x=-7.75, y = 0.9, s='C', fontsize=15, weight='bold')
+plt.text(x=-0.55, y = 0.9, s='D', fontsize=15, weight='bold')
