@@ -1,0 +1,24 @@
+fig, ax = plt.subplots(1,2,figsize=(14,5),  sharey=False)
+ts3a.rename(columns={'value':'Cross year validation accuray'}, inplace=True)
+ts3b.rename(columns={'value':'Testing accuray'}, inplace=True)
+
+clrs = ['blue','skyblue','orange']
+
+sns.set(font_scale=1.8)
+sns.set_theme(style='white')
+sns.despine(bottom = False, right = True, top=True)
+sc_bar= sns.barplot(x= ts3a['year'], y=ts3a['Cross year validation accuray'], hue=ts3a['module'], palette=clrs, fill=True, ax=ax[0])
+sc_bar.legend_.remove()
+bars= sc_bar.patches
+pattern=['//','..','xx']
+hatches=np.repeat(pattern,6)
+for pat,bar in zip(hatches,bars):
+    bar.set_hatch(pat)
+    
+sc_bar= sns.barplot(x= ts3b['year'], y=ts3b['Testing accuray'], hue=ts3b['module'], palette=clrs, fill=True, ax=ax[1])
+sc_bar.legend_.remove()
+bars= sc_bar.patches
+pattern=['//','..','xx']
+hatches=np.repeat(pattern,6)
+for pat,bar in zip(hatches,bars):
+    bar.set_hatch(pat)
