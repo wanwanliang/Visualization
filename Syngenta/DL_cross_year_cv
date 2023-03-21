@@ -1,0 +1,211 @@
+# -------------------------------------------------------------------------------- NOTEBOOK-CELL: CODE
+import dataiku
+import pandas as pd, numpy as np
+from dataiku import pandasutils as pdu
+from numpy import array
+from numpy import hstack
+from keras.models import Sequential
+from keras.layers import Dense
+from keras.layers import Flatten
+from keras.layers.convolutional import Conv1D
+from keras.layers.convolutional import MaxPooling1D
+from keras.layers.convolutional import AveragePooling1D
+from keras.layers import BatchNormalization
+from keras.models import Sequential
+from keras.layers import Dense
+from keras.layers import LSTM
+from sklearn.metrics import mean_squared_error
+from keras.utils.vis_utils import plot_model
+from keras.models import Model
+from sklearn.manifold import TSNE
+from keras.layers import concatenate
+from tensorflow.keras.optimizers import SGD
+from tensorflow.keras.optimizers import Adam
+from keras import metrics
+import keras
+import tensorflow as tf
+from keras.layers import RepeatVector
+from keras.layers import TimeDistributed
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import MinMaxScaler, StandardScaler
+from keras.models import Model
+from sklearn.cluster import AgglomerativeClustering
+import optuna
+from scipy.stats import pearsonr
+
+# Read recipe inputs
+fi_ts = dataiku.Dataset('NA_corn_test')
+fi_ts = fi_ts.get_dataframe()
+
+
+NA_corn_env_DH_var_only = dataiku.Dataset("NA_corn_env_Tr_Val_inte_fac")
+dt = NA_corn_env_DH_var_only.get_dataframe()
+years = list(dt['year'].unique())
+nms1 = ['ETRPlanting-VE',
+ 'ETRVE-V6',
+ 'ETRV6-VT',
+ 'ETRVT-R2',
+ 'ETRR2-R4',
+ 'ETRR4-R6',
+ 'ETRR6-Harvest','WaterDeficitPlanting-VE', 'WaterDeficitVE-V6', 'WaterDeficitV6-VT', 'WaterDeficitVT-R2', 'WaterDeficitR2-R4','WaterDeficitR4-R6','WaterDeficitR6-Harvest',
+            'VaporPressureDeficitPlanting-VE', 'VaporPressureDeficitVE-V6', 'VaporPressureDeficitV6-VT', 'VaporPressureDeficitVT-R2', 'VaporPressureDeficitR2-R4',
+             'VaporPressureDeficitR4-R6','VaporPressureDeficitR6-Harvest',
+ 'precsumPlanting-VE',  'precsumVE-V6', 'precsumV6-VT', 'precsumVT-R2', 'precsumR2-R4',
+       'precsumR4-R6', 'precsumR6-Harvest',
+ 'rhavgPlanting-VE', 'rhavgVE-V6', 'rhavgV6-VT', 'rhavgVT-R2', 'rhavgR2-R4','rhavgR4-R6','rhavgR6-Harvest', 'rhminPlanting-VE','rhminVE-V6', 'rhminV6-VT',
+       'rhminVT-R2', 'rhminR2-R4', 'rhminR4-R6', 'rhminR6-Harvest','HeatPlanting-VE','HeatVE-V6', 'HeatV6-VT', 'HeatVT-R2', 'HeatR2-R4', 'HeatR4-R6','HeatR6-Harvest','wsy_c']
+periods = ['Planting-VE', 'VE-V6', 'V6-VT', 'VT-R2', 'R2-R4','R4-R6','R6-Harvest']
+
+# -------------------------------------------------------------------------------- NOTEBOOK-CELL: CODE
+dt_seq = dt.drop(['wsy_c','ygsmn','trial_id','inte_fac','year'],  axis=1)
+nms = list(dt_seq.columns)
+dt_seq = pd.DataFrame(MinMaxScaler().fit_transform(dt_seq))
+dt_seq.columns = nms
+dt_seq.shape
+
+dt_seq.columns
+
+dt_nseq = pd.get_dummies(dt[['wsy_c']])
+irrs= ["wsy_c_IRR_" + period for period in periods]
+#lirrs = ["wsy_c_LIRR_" + period for period in periods]
+rain = ["wsy_c_RAIN_" + period for period in periods]
+
+for i in range(len(periods)):
+    dt_nseq[irrs[i]] = dt_nseq[['wsy_c_IRR']]
+# for i in range(len(periods)):
+#     dt_nseq[lirrs[i]] = dt_nseq[['wsy_c_LIRR']]
+for i in range(len(periods)):
+    dt_nseq[rain[i]] = dt_nseq[['wsy_c_RAIN']]
+
+dt_nseq.head(2)
+dt_nseq = dt_nseq.drop(['wsy_c_IRR','wsy_c_RAIN'], axis=1)
+dt_nseq.head(2)
+
+dt_seq = pd.concat([dt_seq,dt_nseq],axis=1)
+
+np.set_printoptions(formatter={'float': '{: 0.3f}'.format})
+dt3d = np.empty((dt_seq.shape[0],7,9))
+
+for i in range(dt_seq.shape[0]):
+    dt_ind = np.array(dt_seq.iloc[i,])
+    dt_ind2 = dt_ind.reshape(9,7)
+    dt_ind3 = dt_ind2.T
+    dt3d[i,:,:] = dt_ind3
+
+print(dt3d.shape)
+dt_x = dt3d.copy()
+dt_y = dt[['ygsmn']]
+
+# -------------------------------------------------------------------------------- NOTEBOOK-CELL: CODE
+def rnn_clustering(dt_x, dt_y, dta, n_cluster=5):
+    from scipy.stats import pearsonr
+    x_train, x_val, y_train, y_val = train_test_split(dt_x, dt_y, test_size=0.001, random_state=6658*i)
+    model2 = Sequential()
+    model2.add(LSTM(50, return_sequences = True, input_shape=(x_train.shape[1], x_train.shape[2]), name='layer1'))
+    #model2.add(LSTM(units = 40, return_sequences = True, name='layer2'))
+    model2.add(LSTM(units = 8, return_sequences = False, name='layer7'))
+    #model2.add(Flatten(name='layer5'))
+    #model2.add(Dense(5, name='layer7'))
+    model2.add(Dense(1, name='layer8'))
+    model2.compile(optimizer= tf.keras.optimizers.Adam(lr=0.003), loss='mse')
+
+    my_callbacks = [
+        tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=20),
+        tf.keras.callbacks.ModelCheckpoint(filepath='./models/CNN_1D/model_best.h5', save_best_only=True, monitor='val_accuracy'),
+        tf.keras.callbacks.ReduceLROnPlateau(monitor='val_loss', factor=0.2, patience=20, verbose=1, epsilon=1e-4, min_lr = 0.00001, mode='auto')
+    ]
+
+    history = model2.fit(x_train, y_train, epochs=200, batch_size=32, verbose=0, shuffle=False)
+    fea_pred = model2.predict(x_train)
+    fea_pred = fea_pred.ravel()
+    r2_ts= pearsonr(y_train['ygsmn'].ravel(), fea_pred)[0]
+
+
+    new_model = Model(inputs=model2.input,
+    outputs=model2.get_layer("layer7").output)
+
+    output = pd.DataFrame(new_model.predict(dt_x))
+    output.index = range(output.shape[0])
+
+    clu = AgglomerativeClustering(n_clusters=n_cluster).fit(output).labels_
+    dta['cluster'] = clu
+    ts = dta.groupby(['cluster'])['inte_fac'].mean()
+    ts = ts.reset_index().sort_values(['inte_fac'],ascending=True)
+    ts['DH_RNN'] = range(ts.shape[0])
+    ts['DH_RNN'] = ts['DH_RNN'] + 1
+    dta2 = pd.merge(dta, ts[['cluster','DH_RNN']], on=['cluster'])
+    id_stress = dta2[['trial_id','DH_RNN']]
+
+    return id_stress, r2_ts
+
+def fit_by_year(dt_x, dt_y, dt,fi_dt, year=2020,nms=nms):
+
+
+    x_train, x_test = np.delete(dt_x, (dt['year']==year), axis=0), dt_x[(dt['year']==year),:,:]
+    y_train, y_test = dt_y.loc[~(dt['year']==year),], dt_y.loc[(dt['year']==year),]
+    x_train, x_val, y_train, y_val = train_test_split(x_train, y_train, test_size=0.15,random_state=6)
+   # x_train.index = y_train.index = range(x_train.shape[0])
+#    x_val.index = y_val.index = range(x_val.shape[0])
+    
+
+    
+    dt_sb = dt.loc[~(dt['year']==year),]
+    dt_sb, dt_val = train_test_split(dt_sb, test_size=0.15,random_state=6)
+    dt_sb.index = range(dt_sb.shape[0])
+    dt_val.index = range(dt_val.shape[0])
+    dt_test = dt.loc[(dt['year']==year),]
+    dt_test.index = range(dt_test.shape[0])
+
+    stress_df = dt_sb[['trial_id']]
+    ts_df = []
+    for i in range(20):
+        re_df, r2 = rnn_clustering(x_train, y_train, dt_sb, n_cluster=5)
+        nm = 'RNN_DH_iter' + str(i+1)
+        re_df.columns = ['trial_id',nm]
+
+        stress_df = pd.merge(stress_df, re_df, on=['trial_id'])
+        ts_df.append(r2)
+        print(i)
+    ts_df = pd.DataFrame(ts_df)
+    stress_df2 = stress_df.copy()
+
+    stress_df2['rnn'] = stress_df2.drop(['trial_id'],axis=1).mean(axis=1)
+    stress_df2['rnn'] = stress_df2['rnn'].round(0)
+
+    dt_str = pd.merge(stress_df2[['rnn','trial_id']], dt_sb, on=['trial_id'])
+    x_var, y_var = dt_str[nms], dt_str[['rnn']]
+
+    from sklearn.ensemble import RandomForestClassifier
+    dp = 6
+    ms = 1
+    rf = RandomForestClassifier(max_depth=dp, n_estimators=100,min_samples_leaf=ms).fit(pd.get_dummies(x_var),y_var)
+    dt_test['rnn'] = rf.predict(pd.get_dummies(dt_test[nms]))
+    fi_dt['rnn'] = rf.predict(pd.get_dummies(fi_dt[nms]))
+    cor_val = pearsonr(y_val['ygsmn'], rf.predict(dt_val[nms]))[0]
+
+    return dt_str[['trial_id','rnn','ygsmn','inte_fac']],  dt_test[['trial_id','rnn','ygsmn','inte_fac']], fi_dt[['trial_id','rnn','ygsmn']], cor_val
+
+# -------------------------------------------------------------------------------- NOTEBOOK-CELL: CODE
+re_df = pd.DataFrame()
+for year in years:
+    print(year)
+    tr_dt, ts_dt, ts_fi, val_cor = fit_by_year(dt_x, dt_y, dt, fi_ts, year= year, nms=nms)
+    tr_cor = tr_dt[['rnn','ygsmn','inte_fac']].corr()['rnn'][1]
+    ts_cor = ts_dt[['rnn','ygsmn','inte_fac']].corr()['rnn'][1]
+    fi_cor = ts_fi[['rnn','ygsmn']].corr()['rnn'][1]
+
+    df1 = pd.DataFrame([year, tr_cor,val_cor, ts_cor, fi_cor])
+    re_df = pd.concat([re_df, df1.T], axis=0)
+
+
+# -------------------------------------------------------------------------------- NOTEBOOK-CELL: CODE
+re_df.columns=['year','tr_accuracy','val_accuray','ts_accuracy','final_test_accuracy']
+re_df
+
+# -------------------------------------------------------------------------------- NOTEBOOK-CELL: CODE
+NA_corn_RNN_cv_df = re_df
+
+
+# Write recipe outputs
+NA_corn_RNN_cv = dataiku.Dataset("NA_corn_RNN_cv")
+NA_corn_RNN_cv.write_with_schema(NA_corn_RNN_cv_df)
