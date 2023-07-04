@@ -1,0 +1,8 @@
+aiohttp==3.8.1
+asyncio==3.4.3
+nest-asyncio==1.5.5
+scikit-learn==1.1.3 
+statsmodels==0.13.5
+MiniSom==2.3.0
+kneed==0.8.1
+hyperopt==0.2.7
